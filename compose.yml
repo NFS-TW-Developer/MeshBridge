@@ -1,0 +1,26 @@
+services:
+  meshbridge-broker:
+    # build: ./meshbridge-broker
+    # image: meshbridge-broker:latest
+    image: ghcr.io/nfs-tw-developer/meshbridge-broker:latest
+    container_name: meshbridge-broker
+    restart: unless-stopped
+    pull_policy: always
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Taipei
+      - MESHBRIDGE_CONNECTION_NAME=${MESHBRIDGE_CONNECTION_NAME}
+    volumes:
+      - /etc/ssl/certs:/etc/ssl/certs:ro # 系統 SSL 憑證 (橋接 8883 必備)
+      - ./storage/meshbridge-broker/log:/mosquitto/log
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    networks:
+      - meshbridge-network
+
+networks:
+  meshbridge-network:
+    external: true
